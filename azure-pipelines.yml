@@ -1,33 +1,40 @@
 trigger:
 - main
 
-jobs:
-- job: Job1
-  pool:
-    vmImage: 'ubuntu-latest'
+pool:
+  vmImage: 'ubuntu-latest'
 
-  variables:
-    solution: '**/*.sln'
-    buildPlatform: 'Any CPU'
-    buildConfiguration: 'Release'
+variables:
+  buildConfiguration: 'Release'
+  buildPlatform: 'Any CPU'
+  buildOutput: '$(Build.ArtifactStagingDirectory)/output'
 
-  steps:
-  - task: NuGetToolInstaller@1
-    name: 'NugetToolInstaller'
-    displayName: 'Nuget tool installer'
+steps:
+- task: DotNetCoreCLI@2
+  displayName: "dotnet build and pack"
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(buildOutput)'
 
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'build'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(buildOutput)'
 
-  #- task: DotNetCoreCLI@2
-  #  inputs:
-  #    command: 'pack'
-  #    packagesToPack: '**/*.csproj'
-  #    versioningScheme: 'off'
 
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'publish'
-      publishWebProjects: true
-      zipAfterPublish: false
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(buildOutput)'
+    artifactName: '$(Branch)_$(EndVersion)'
+
+- task: NuGetCommand@2
+  displayName: "push to artifact"
+  inputs:
+    command: push
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'dotnet-hello-world'
+    allowPackageConflicts: true
