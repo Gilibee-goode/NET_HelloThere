@@ -3,41 +3,30 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'
+  name: 'helloworld_agent'
 
 variables:
-  buildConfiguration: 'Release'
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
-  buildOutput: '$(Build.ArtifactStagingDirectory)/output'
+  buildConfiguration: 'Release'
 
 steps:
 - task: NuGetToolInstaller@1
+  name: 'NugetToolInstaller'
+  displayName: 'Nuget tool installer'
 
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
   inputs:
-    restoreSolution: '$(solution)'
+    command: 'build'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+#- task: DotNetCoreCLI@2
+#  inputs:
+#    command: 'pack'
+#    packagesToPack: '**/*.csproj'
+#    versioningScheme: 'off'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
-    projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(buildOutput)'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'pack'
-    packagesToPack: '**/*.csproj'
-    configuration: $(buildConfiguration)
-    outputDir: '$(buildOutput)'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(buildOutput)'
-    ArtifactName: 'NugetPackage'
-    publishLocation: 'container'
+    publishWebProjects: true
+    zipAfterPublish: false
