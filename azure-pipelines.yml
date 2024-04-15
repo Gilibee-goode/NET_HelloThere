@@ -1,31 +1,33 @@
 trigger:
 - main
 
-pool:
-  vmImage: 'ubuntu-latest'
+jobs:
+- job: Job1
+  pool:
+    vmImage: 'ubuntu-latest'
 
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  variables:
+    solution: '**/*.sln'
+    buildPlatform: 'Any CPU'
+    buildConfiguration: 'Release'
 
-steps:
-- task: NuGetToolInstaller@1
-  name: 'NugetToolInstaller'
-  displayName: 'Nuget tool installer'
+  steps:
+  - task: NuGetToolInstaller@1
+    name: 'NugetToolInstaller'
+    displayName: 'Nuget tool installer'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'build'
 
-#- task: DotNetCoreCLI@2
-#  inputs:
-#    command: 'pack'
-#    packagesToPack: '**/*.csproj'
-#    versioningScheme: 'off'
+  #- task: DotNetCoreCLI@2
+  #  inputs:
+  #    command: 'pack'
+  #    packagesToPack: '**/*.csproj'
+  #    versioningScheme: 'off'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    publishWebProjects: true
-    zipAfterPublish: false
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'publish'
+      publishWebProjects: true
+      zipAfterPublish: false
