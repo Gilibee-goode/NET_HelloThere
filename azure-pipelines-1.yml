@@ -54,13 +54,3 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Push to Artifacts'
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: 'dotnet_hellothere_artifacts'
-
-
