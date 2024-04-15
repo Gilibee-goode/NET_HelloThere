@@ -1,40 +1,8 @@
-trigger:
-- main
+pool:  
+  name: Default 
 
-pool:
-  vmImage: 'ubuntu-latest'
+trigger: none 
 
-variables:
-  buildConfiguration: 'Release'
-  buildPlatform: 'Any CPU'
-  buildOutput: '$(Build.ArtifactStagingDirectory)/output'
-
-steps:
-- task: DotNetCoreCLI@2
-  displayName: "dotnet build and pack"
-  inputs:
-    command: 'build'
-    projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(buildOutput)'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(buildOutput)'
-
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact'
-  inputs:
-    PathtoPublish: '$(buildOutput)'
-    artifactName: '$(Branch)_$(EndVersion)'
-
-- task: NuGetCommand@2
-  displayName: "push to artifact"
-  inputs:
-    command: push
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: 'dotnet-hello-world'
-    allowPackageConflicts: true
+steps: 
+- script: echo Hello, world! 
+  displayName: 'Run a one-line script' 
