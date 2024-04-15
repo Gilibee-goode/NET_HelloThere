@@ -18,7 +18,7 @@ variables:
 
 steps: 
 - task: DotNetCoreCLI@2
-  displayName: "Restore NuGet Packages"
+  displayName: 'Restore dependencies'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
@@ -26,31 +26,25 @@ steps:
     nugetConfigPath: 'nuget.config'
 
 - task: DotNetCoreCLI@2
-  displayName: "dotnet Build"
+  displayName: 'Build project'
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-restore'
+    arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: "Pack"
+  displayName: 'Pack project'
   inputs:
     command: 'pack'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build'
+    packDirectory: '$(Build.ArtifactStagingDirectory)'
+    configuration: $(buildConfiguration)
+    includeSymbols: false
 
 - task: DotNetCoreCLI@2
-  displayName: 'Publish'
+  displayName: 'Push package'
   inputs:
-    command: 'publish'
-    publishWebProjects: false
-    projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build'
-    zipAfterPublish: true
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact'
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'dotnet_hellothere_artifacts'
