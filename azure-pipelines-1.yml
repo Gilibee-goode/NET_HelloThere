@@ -6,7 +6,10 @@
 pool:  
   name: Default 
 
-trigger: none 
+#trigger: none 
+
+trigger:
+- main
 
 variables:
   buildConfiguration: 'Release'
