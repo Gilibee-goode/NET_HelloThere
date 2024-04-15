@@ -59,6 +59,6 @@ steps:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
     nuGetFeedType: 'internal'
-    publishVstsFeed: 'NET_helloworld'
+    publishVstsFeed: 'dotnet_hellothere_artifacts'
 
 
