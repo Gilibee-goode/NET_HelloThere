@@ -22,6 +22,8 @@ steps:
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
+    feedsToUse: 'config'
+    nugetConfigPath: 'nuget.config'
 
 - task: DotNetCoreCLI@2
   displayName: "dotnet Build"
@@ -59,6 +61,6 @@ steps:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
     nuGetFeedType: 'internal'
-    publishVstsFeed: 'd14b5625-c3e7-4a56-8e0f-fd7658241d50'
+    publishVstsFeed: 'dotnet_hellothere_artifacts'
 
 
