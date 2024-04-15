@@ -17,7 +17,6 @@ variables:
 
 
 steps: 
-
 - task: DotNetCoreCLI@2
   displayName: 'Restore dependencies'
   inputs:
@@ -41,13 +40,10 @@ steps:
     configuration: $(buildConfiguration)
     includeSymbols: false
 
+
 - task: DotNetCoreCLI@2
-  displayName: 'push to artifacts'
   inputs:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
     nuGetFeedType: 'internal'
-    publishVstsFeed: 'd14b5625-c3e7-4a56-8e0f-fd7658241d50/e3ceb381-e2f3-4067-8c8a-a18b104f5c4a'
-    allowPackageConflicts: true
-
-  
+    publishVstsFeed: 'f56b3779-0a81-4cd4-a5bf-9e351f21c7d3'
