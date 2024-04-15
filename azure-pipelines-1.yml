@@ -42,9 +42,8 @@ steps:
     includeSymbols: false
 
 - task: DotNetCoreCLI@2
-  displayName: 'Push package'
   inputs:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
     nuGetFeedType: 'internal'
-    publishVstsFeed: 'dotnet_hellothere_artifacts'
+    publishVstsFeed: 'd14b5625-c3e7-4a56-8e0f-fd7658241d50/e3ceb381-e2f3-4067-8c8a-a18b104f5c4a'
