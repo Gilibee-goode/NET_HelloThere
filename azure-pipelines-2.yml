@@ -40,10 +40,9 @@ steps:
     configuration: $(buildConfiguration)
     includeSymbols: false
 
-
-- task: DotNetCoreCLI@2
+- task: NuGetCommand@2
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
     nuGetFeedType: 'internal'
     publishVstsFeed: 'f56b3779-0a81-4cd4-a5bf-9e351f21c7d3'
