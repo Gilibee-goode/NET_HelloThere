@@ -1,8 +1,48 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
 pool:  
   name: Default 
 
-trigger: none 
+#trigger: none 
+
+trigger:
+- main
+
+variables:
+  buildConfiguration: 'Release'
+  buildPlatform: 'Any CPU'
+
 
 steps: 
-- script: echo Hello, world! 
-  displayName: 'Run a one-line script' 
+- task: DotNetCoreCLI@2
+  displayName: 'Restore dependencies'
+  inputs:
+    command: 'restore'
+    feedsToUse: 'config'
+    nugetConfigPath: 'nuget.config'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build project'
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Pack project'
+  inputs:
+    command: 'pack'
+    projects: '**/*.csproj'
+    packDirectory: '$(Build.ArtifactStagingDirectory)'
+    configuration: $(buildConfiguration)
+    includeSymbols: false
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'f56b3779-0a81-4cd4-a5bf-9e351f21c7d3'
