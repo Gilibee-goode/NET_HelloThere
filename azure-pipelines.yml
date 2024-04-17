@@ -14,15 +14,11 @@ trigger:
 variables:
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
+  artifactName: '$(Build.SourceBranchName)_$(Build.BuildId)' # Versioning based on branch and build ID
 
 
 steps: 
-- task: DotNetCoreCLI@2
-  displayName: 'Restore dependencies'
-  inputs:
-    command: 'restore'
-    feedsToUse: 'config'
-    nugetConfigPath: 'nuget.config'
+
 
 - task: DotNetCoreCLI@2
   displayName: 'Build project'
@@ -40,9 +36,19 @@ steps:
     configuration: $(buildConfiguration)
     includeSymbols: false
 
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: '$(artifactName)'
+
+
 - task: NuGetCommand@2
+  displayName: 'Publish ffs'
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
     nuGetFeedType: 'internal'
-    publishVstsFeed: 'f56b3779-0a81-4cd4-a5bf-9e351f21c7d3'
+    publishVstsFeed: 'd14b5625-c3e7-4a56-8e0f-fd7658241d50/c9382249-0c9c-40c8-9e47-6546453a072c'
+    allowPackageConflicts: true
+
