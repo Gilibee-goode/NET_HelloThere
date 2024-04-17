@@ -12,29 +12,32 @@ trigger:
 - main
 
 variables:
-  buildConfiguration: 'Release'
-  buildPlatform: 'Any CPU'
-  artifactName: '$(Build.SourceBranchName)_$(Build.BuildId)' # Versioning based on branch and build ID
+- group: Version
+- name: buildPlatform
+  value: 'Any CPU'
+- name: artifactName
+  value: '$(Build.SourceBranchName)_$(Build.BuildId)' # Versioning based on branch and build ID
+- name: buildConfiguration
+  value: 'Release'
+- name: Counter
+  value: $[counter(variables['Patch'], 0)]
+- name: EndVersion
+  value: $(Major).$(Minor).$(Patch).$(Counter)
+- name: Branch
+  value: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
+
 
 
 steps: 
 
-
 - task: DotNetCoreCLI@2
-  displayName: 'Build project'
-  inputs:
-    command: 'build'
-    projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Pack project'
+  displayName: "dotnet build and pack"
   inputs:
     command: 'pack'
-    projects: '**/*.csproj'
-    packDirectory: '$(Build.ArtifactStagingDirectory)'
-    configuration: $(buildConfiguration)
-    includeSymbols: false
+    arguments: '/p:Version=$(EndVersion) /p:PackageVersion=$(EndVersion) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    versioningScheme: byEnvVar
+    versionEnvVar: EndVersion
+    packagesToPack: '**/*.csproj'    
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
