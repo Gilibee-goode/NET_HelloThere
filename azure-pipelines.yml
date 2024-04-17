@@ -30,6 +30,14 @@ variables:
 
 steps: 
 
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'gilig42sonar'
+    organization: 'gilig42'
+    scannerMode: 'MSBuild'
+    projectKey: 'gilig42_Hello-World'
+    projectName: 'Hello World'
+
 - task: DotNetCoreCLI@2
   displayName: "dotnet build and pack"
   inputs:
@@ -38,6 +46,10 @@ steps:
     versioningScheme: byEnvVar
     versionEnvVar: EndVersion
     packagesToPack: '**/*.csproj'    
+
+- task: SonarCloudAnalyze@1
+  inputs:
+    jdkversion: 'JAVA_HOME_17_X64'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
